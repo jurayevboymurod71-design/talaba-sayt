@@ -1,0 +1,215 @@
+import type * as React from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowRight, Briefcase, FlaskConical, Globe, GraduationCap, Users } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { NewsCard, ProjectCard, StartupCard, WorkCard } from "@/components/site/cards";
+import { DemoNotice } from "@/components/site/DemoNotice";
+import { HeroBanner } from "@/components/site/HeroBanner";
+import { PublicLayout } from "@/components/site/PublicLayout";
+import { SectionHeading } from "@/components/site/SectionHeading";
+import {
+  getPlatformStats,
+  getPublicGallery,
+  getPublicProjects,
+  getPublicStartups,
+  getPublicWorks,
+  getPublishedNews,
+} from "@/lib/demo/public";
+import { pageMeta } from "@/lib/seo";
+
+export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: pageMeta(
+      "IPU Talaba Platformasi — Biz bilan iqtidoringizni namoyon eting",
+      "Iqtisodiyot va pedagogika universiteti talabalarining iqtidori, ijodiy ishlari, loyihalari va startaplari bir platformada.",
+      { full: true },
+    ),
+  }),
+  component: Index,
+});
+
+const aboutParagraphs = [
+  "Iqtisodiyot va Pedagogika Universiteti (IPU) — zamonaviy ta’lim, amaliy ko‘nikmalar va ijtimoiy mas’uliyatni uyg‘unlashtirishga intiluvchi oliy ta’lim muassasasi.",
+  "Universitet bakalavriat va magistratura ta’lim dasturlari, ilmiy tadqiqotlar, innovatsiyalar hamda xalqaro hamkorlik yo‘nalishlarida faoliyat olib boradi.",
+  "IPU talabalarining bilim va salohiyatini rivojlantirish, ularning ijodiy tashabbuslarini qo‘llab-quvvatlash va kelajak kasbiy faoliyatiga tayyorlashga e’tibor qaratadi.",
+];
+
+const aboutDirections = [
+  { icon: GraduationCap, title: "Bakalavriat va magistratura" },
+  { icon: FlaskConical, title: "Ilmiy tadqiqot va innovatsiyalar" },
+  { icon: Globe, title: "Xalqaro hamkorlik" },
+  { icon: Users, title: "Talabalar hayoti va tashabbuslari" },
+  { icon: Briefcase, title: "Amaliy ko‘nikmalar va karyera rivoji" },
+];
+
+function Section({ children, muted }: { children: React.ReactNode; muted?: boolean }) {
+  return (
+    <section className={muted ? "border-y border-border bg-surface/50" : undefined}>
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20">{children}</div>
+    </section>
+  );
+}
+
+function Index() {
+  const news = getPublishedNews().slice(0, 3);
+  const works = getPublicWorks().slice(0, 3);
+  const gallery = getPublicGallery().slice(0, 6);
+  const projects = getPublicProjects().slice(0, 3);
+  const startups = getPublicStartups().slice(0, 3);
+  const stats = getPlatformStats();
+
+  return (
+    <PublicLayout>
+      <HeroBanner />
+
+      <section aria-labelledby="platform-purpose" className="border-b border-border bg-surface/30">
+        <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+            Platformaning maqsadi
+          </p>
+          <h2
+            id="platform-purpose"
+            className="mt-3 max-w-5xl border-l-2 border-accent pl-5 text-xl font-semibold leading-relaxed text-balance sm:pl-7 sm:text-2xl"
+          >
+            IPU Talaba Platformasi — talabalar bilimlari, iste’dodi, ijodiy ishlari, loyihalari va
+            startap tashabbuslarini birlashtiruvchi yagona raqamli maydon.
+          </h2>
+        </div>
+      </section>
+
+      <Section>
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:items-center lg:gap-16">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+              Platforma haqida
+            </p>
+            <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-balance sm:text-3xl">
+              Iqtisodiyot va Pedagogika Universiteti
+            </h2>
+            <div className="mt-5 max-w-2xl space-y-4 text-base leading-relaxed text-muted-foreground">
+              {aboutParagraphs.map((p) => (
+                <p key={p}>{p}</p>
+              ))}
+            </div>
+            <Button asChild className="bg-gradient-brand shadow-glow mt-7 w-full sm:w-auto">
+              <Link to="/institut-haqida">
+                Institut haqida batafsil <ArrowRight />
+              </Link>
+            </Button>
+          </div>
+          <div className="min-w-0">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              Faoliyat yo‘nalishlari
+            </p>
+            <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card">
+              {aboutDirections.map(({ icon: Icon, title }) => (
+                <li key={title} className="flex items-center gap-3 px-4 py-3.5 sm:px-5">
+                  <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-accent/10">
+                    <Icon className="size-4 text-accent" aria-hidden />
+                  </span>
+                  <span className="min-w-0 text-sm font-semibold sm:text-base">{title}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </Section>
+
+      <Section muted>
+        <SectionHeading
+          title="So‘nggi yangiliklar"
+          description="Institut yangiliklari va e’lonlari."
+          to="/yangiliklar"
+        />
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {news.map((n) => (
+            <NewsCard key={n.slug} item={n} />
+          ))}
+        </div>
+      </Section>
+
+      <Section>
+        <SectionHeading
+          title="Tanlangan ijodiy ishlar"
+          description="Moderator tasdiqlagan va muallif roziligi bilan chop etilgan ishlar."
+          to="/ijodiy-ishlar"
+        />
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {works.map((w) => (
+            <WorkCard key={w.id} item={w} />
+          ))}
+        </div>
+      </Section>
+
+      <Section muted>
+        <SectionHeading title="Foto va video galereya" to="/galereya" />
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+          {gallery.map((g) => (
+            <Link
+              key={g.id}
+              to="/galereya"
+              className="group relative overflow-hidden rounded-xl border border-border"
+            >
+              <img
+                src={g.image}
+                alt={g.title}
+                loading="lazy"
+                width={1280}
+                height={800}
+                className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+              <span className="glass absolute inset-x-0 bottom-0 truncate px-3 py-2 text-sm font-medium">
+                {g.type === "video" ? "▶ " : ""}
+                {g.title}
+              </span>
+            </Link>
+          ))}
+        </div>
+      </Section>
+
+      <Section>
+        <SectionHeading title="Loyihalar va ixtirolar" to="/loyihalar" />
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {projects.map((p) => (
+            <ProjectCard key={p.id} item={p} />
+          ))}
+        </div>
+      </Section>
+
+      <Section muted>
+        <SectionHeading
+          title="Startap loyihalar"
+          description="Hamkor va tadbirkorlar uchun talabalar startaplari."
+          to="/startaplar"
+        />
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {startups.map((s) => (
+            <StartupCard key={s.id} item={s} />
+          ))}
+        </div>
+      </Section>
+
+      <Section>
+        <SectionHeading
+          title="Demo statistika"
+          description="Quyidagi raqamlar namoyish uchun mo‘ljallangan bo‘lib, IPU ning haqiqiy institut statistikasi emas."
+        />
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          {stats.map((s) => (
+            <div key={s.label} className="rounded-2xl border border-border bg-card p-6 text-center">
+              <p className="text-gradient-brand text-4xl font-extrabold">{s.value}</p>
+              <p className="mt-2 text-sm text-muted-foreground">{s.label}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-6">
+          <DemoNotice>
+            Barcha raqamlar demo ma’lumotlar asosida hisoblangan va haqiqiy ko‘rsatkichlar sifatida
+            talqin qilinmasligi kerak.
+          </DemoNotice>
+        </div>
+      </Section>
+    </PublicLayout>
+  );
+}
